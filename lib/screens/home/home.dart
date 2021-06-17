@@ -1,4 +1,3 @@
-import 'package:carousel_pro/carousel_pro.dart';
 import 'package:coopstamariana/screens/Welcome/components/background.dart';
 import 'package:coopstamariana/screens/registro/registro.dart';
 import 'package:coopstamariana/screens/verUsuarios/usuarios.dart';
@@ -16,19 +15,7 @@ class Home extends StatelessWidget {
               child: SizedBox(
                 height: 350.0,
                 width: 335.0,
-                child: Carousel(
-                  images: [
-                    ExactAssetImage("images/pagoagua.jpeg"),
-                    ExactAssetImage("images/Santa_Marianita.jpeg"),
-                    ExactAssetImage("images/USER.png"),
-                  ],
-                  autoplay: true,
-                  animationDuration: Duration(milliseconds: 1000),
-                  dotSize: 6.0,
-                  dotSpacing: 15.0,
-                  dotColor: Colors.lightGreenAccent,
-                  borderRadius: true,
-                ),
+                child: Text("TESTING ON SERVER"),
               )),
           FloatingActionButton.extended(
             onPressed: () {
