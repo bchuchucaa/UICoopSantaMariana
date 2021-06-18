@@ -20,7 +20,7 @@ class _ListUsuariosState extends State<ListUsuarios> {
 
   Future<Null> _getUsuarios() async {
     final response =
-        await http.get(Uri.parse('http://localhost:8000/user/users'));
+        await http.get(Uri.parse('https://172.16.0.130:8000/user/users'));
 
     if (response.statusCode == 200) {
       String body = utf8.decode(response.bodyBytes);

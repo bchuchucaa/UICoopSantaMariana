@@ -26,7 +26,7 @@ class _RegistroState extends State<Registro> {
 
   register(Usuario user) async {
     final response =
-        await http.post(Uri.parse('http://localhost:8000/register/'),
+        await http.post(Uri.parse('https://172.16.0.130:8000/register/'),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },

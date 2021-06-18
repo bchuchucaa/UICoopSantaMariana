@@ -22,7 +22,7 @@ class _BodyState extends State<Body> {
   Future<Usuario> login() async {
     print(myController.text);
     final response = await http.post(
-      Uri.parse('http://localhost:8000/login/'),
+      Uri.parse('https://172.16.0.130:8000/login/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -77,15 +77,16 @@ class _BodyState extends State<Body> {
           ),
           FloatingActionButton.extended(
             onPressed: () {
-              login().then((value) => [
-                    if (value.nombre.isNotEmpty)
-                      {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Inicio()),
-                        )
-                      }
-                  ]);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Inicio()),
+              );
+              //login().then((value) => [
+              //if (value.nombre.isNotEmpty)
+              //{
+
+              //}
+              //]);
             },
             label: const Text("LOGIN"),
             icon: const Icon(Icons.login),
