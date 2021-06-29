@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'dart:js';
-
-import 'package:coopstamariana/components/text_field_container.dart';
+import 'package:coopstamariana/model/DerechoModel.dart';
 import 'package:coopstamariana/model/usuario.dart';
-import 'package:coopstamariana/screens/Welcome/components/background.dart';
+import 'package:coopstamariana/screens/registroDerecho/registroDerecho.dart';
+import 'package:coopstamariana/screens/registroLectura/registroLectura.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../constants.dart';
@@ -16,11 +15,38 @@ class ListUsuarios extends StatefulWidget {
 class _ListUsuariosState extends State<ListUsuarios> {
   List<Usuario> _usuarios = [];
   List<Usuario> _usuarioSearch = [];
+  List<DerechoDeAgua> _derechosUser = [];
   final controller = TextEditingController();
+//METHOD TO GET DERECHOS OF USER
 
+  Future<Null> _getDerechos() async {
+    final response = await http.get(Uri.parse(
+      'http://localhost:8000/derecho/derechos?cedula=0106330145',
+    ));
+
+    if (response.statusCode == 200) {
+      String body = utf8.decode(response.bodyBytes);
+      final jsonData = jsonDecode(body);
+      print(response.body);
+      setState(() {
+        for (var item in jsonData) {
+          _derechosUser.add(DerechoDeAgua(
+            id: item["id"].toString(),
+            usuario: item["usuario_id"],
+            fechaAdquisicion: item["fecha"],
+            numeroDeMedidor: item["numero_medidor"],
+          ));
+        }
+      });
+    } else {
+      throw Exception("CONECCTION LOSS");
+    }
+  }
+
+//METOD TO GET USER FROM API
   Future<Null> _getUsuarios() async {
     final response =
-        await http.get(Uri.parse('https://172.16.0.130:8000/user/users'));
+        await http.get(Uri.parse('http://localhost:8000/user/users'));
 
     if (response.statusCode == 200) {
       String body = utf8.decode(response.bodyBytes);
@@ -50,6 +76,7 @@ class _ListUsuariosState extends State<ListUsuarios> {
   }
 
   Widget _buidUserslist() {
+    Size size = MediaQuery.of(context).size;
     return new ListView.builder(
         itemCount: _usuarios.length,
         itemBuilder: (context, index) {
@@ -58,35 +85,67 @@ class _ListUsuariosState extends State<ListUsuarios> {
             margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
             color: Colors.purple.shade100,
             child: ListTile(
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              leading: Container(
-                padding: EdgeInsets.only(right: 12.0),
-                decoration: new BoxDecoration(
-                  border: new Border(
-                      right: new BorderSide(width: 1.0, color: Colors.white24)),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                leading: Container(
+                  padding: EdgeInsets.only(right: 12.0),
+                  decoration: new BoxDecoration(
+                    border: new Border(
+                        right:
+                            new BorderSide(width: 1.0, color: Colors.white24)),
+                  ),
+                  child: Icon(Icons.info, color: Colors.blueAccent),
                 ),
-                child: Icon(Icons.info, color: Colors.blueAccent),
-              ),
-              title: new Text(
-                _usuarios[index].nombre + ' ' + _usuarios[index].apellido,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Icon(Icons.person, color: Colors.yellowAccent),
-                  Text(_usuarios[index].id),
-                  Text(_usuarios[index].direccion),
-                  Text(_usuarios[index].correo)
-                ],
-              ),
-              trailing: FloatingActionButton.extended(
-                onPressed: () {},
-                label: Text("Editar"),
-                icon: Icon(Icons.edit),
-              ),
-            ),
+                title: new Text(
+                  _usuarios[index].nombre + ' ' + _usuarios[index].apellido,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Icon(Icons.person, color: Colors.yellowAccent),
+                    Text(_usuarios[index].id),
+                    Text(_usuarios[index].direccion),
+                    Text(_usuarios[index].correo),
+                  ],
+                ),
+                trailing: SizedBox(
+                  width: size.width * 0.5,
+                  child: new ButtonBar(
+                    mainAxisSize: MainAxisSize.min,
+                    buttonPadding: EdgeInsets.all(8.0),
+                    // this will take space as minimum as posible(to center)
+                    children: <Widget>[
+                      new FloatingActionButton.extended(
+                        onPressed: () {
+                          _derechosUser = [];
+                          _getDerechos().then((value) {
+                            return _buildResultDerechos();
+                          });
+                        },
+                        label: Text("Lectura"),
+                        icon: Icon(Icons.add),
+                      ),
+                      new FloatingActionButton.extended(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    RegistroDerecho(_usuarios[index].id)),
+                          );
+                        },
+                        label: Text("Derecho"),
+                        icon: Icon(Icons.add_moderator),
+                      ),
+                      new FloatingActionButton.extended(
+                        onPressed: () {},
+                        label: Text("Datos"),
+                        icon: Icon(Icons.edit_attributes),
+                      ),
+                    ],
+                  ),
+                )),
           );
         });
   }
@@ -114,13 +173,42 @@ class _ListUsuariosState extends State<ListUsuarios> {
                   Icon(Icons.person, color: Colors.yellowAccent),
                   Text(_usuarioSearch[i].id),
                   Text(_usuarioSearch[i].direccion),
-                  Text(_usuarioSearch[i].correo)
+                  Text(_usuarioSearch[i].correo),
+                  FloatingActionButton.extended(
+                    onPressed: () {
+                      _getDerechos().then((value) => _buildResultDerechos);
+                    },
+                    label: Text("Lectura"),
+                    icon: Icon(Icons.add),
+                  )
                 ],
               ),
-              trailing: FloatingActionButton.extended(
-                onPressed: () {},
-                label: Text("Editar"),
-                icon: Icon(Icons.edit),
+              trailing: new ButtonBar(
+                mainAxisSize: MainAxisSize
+                    .min, // this will take space as minimum as posible(to center)
+                children: <Widget>[
+                  new FloatingActionButton.extended(
+                    onPressed: () {
+                      //Metod to get all Derechos of user
+                      _derechosUser = [];
+                      _getDerechos().then((value) {
+                        return _buildResultDerechos;
+                      });
+                    },
+                    label: Text("Lectura"),
+                    icon: Icon(Icons.add),
+                  ),
+                  new FloatingActionButton.extended(
+                    onPressed: () {},
+                    label: Text("Derecho"),
+                    icon: Icon(Icons.add_moderator),
+                  ),
+                  new FloatingActionButton.extended(
+                    onPressed: () {},
+                    label: Text("Datos"),
+                    icon: Icon(Icons.edit_attributes),
+                  )
+                ],
               ),
             ),
             margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
@@ -191,5 +279,46 @@ class _ListUsuariosState extends State<ListUsuarios> {
         _usuarioSearch.add(usuario);
     });
     setState(() {});
+  }
+
+  _buildResultDerechos() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return new AlertDialog(
+            title: Text('Seleccione su Derecho'),
+            content: Container(
+              width: double.minPositive,
+              child: new ListView.builder(
+                shrinkWrap: true,
+                itemCount: _derechosUser.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return new ListTile(
+                    tileColor: Colors.amber,
+                    leading: Icon(
+                      Icons.account_box,
+                      color: Colors.blueAccent,
+                    ),
+                    title: new Text(_derechosUser[index].numeroDeMedidor),
+                    subtitle: new Text(_derechosUser[index].id),
+                    trailing: new Column(
+                      children: <Widget>[
+                        new Text(_derechosUser[index].fechaAdquisicion)
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                RegistroLectura(_derechosUser[index].id)),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          );
+        });
   }
 }

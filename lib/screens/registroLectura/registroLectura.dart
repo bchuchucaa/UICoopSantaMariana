@@ -6,12 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../constants.dart';
 
-class Registro extends StatefulWidget {
+class RegistroLectura extends StatefulWidget {
+  final String idDerecho;
+  DateTime now = new DateTime.now();
+  RegistroLectura(this.idDerecho);
+
   @override
-  _RegistroState createState() => _RegistroState();
+  _RegistroLecturaState createState() => _RegistroLecturaState();
 }
 
-class _RegistroState extends State<Registro> {
+class _RegistroLecturaState extends State<RegistroLectura> {
   final myControllerId = TextEditingController();
 
   final myControllerNombre = TextEditingController();
@@ -56,53 +60,40 @@ class _RegistroState extends State<Registro> {
             width: size.width * 0.45,
             height: size.height * 0.15,
           ),
-          Text("REGISTRATE AQUI"),
+          Text("REGISTRATE AQUI TU LECTURA"),
           TextFielContainter(
             child: TextField(
               controller: myControllerId,
               decoration: InputDecoration(
                   icon: Icon(
-                    Icons.perm_identity,
+                    Icons.code,
                     color: kPrimaryColor,
                   ),
                   border: InputBorder.none,
-                  hintText: "Cedula"),
+                  hintText: widget.idDerecho),
             ),
           ),
           TextFielContainter(
             child: TextField(
-              controller: myControllerNombre,
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.person,
-                    color: kPrimaryColor,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Nombre"),
-            ),
-          ),
-          TextFielContainter(
-            child: TextField(
-              controller: myControllerApellido,
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.person,
-                    color: kPrimaryColor,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Apellido"),
-            ),
+                controller: myControllerNombre,
+                decoration: InputDecoration(
+                    icon: Icon(
+                      Icons.date_range,
+                      color: kPrimaryColor,
+                    ),
+                    border: InputBorder.none,
+                    hintText: widget.now.toString())),
           ),
           TextFielContainter(
             child: TextField(
               controller: myControllerDireccion,
               decoration: InputDecoration(
                   icon: Icon(
-                    Icons.location_city,
+                    Icons.arrow_left,
                     color: kPrimaryColor,
                   ),
                   border: InputBorder.none,
-                  hintText: "Direccion"),
+                  hintText: "Lectura Anterior"),
             ),
           ),
           TextFielContainter(
@@ -110,11 +101,35 @@ class _RegistroState extends State<Registro> {
               controller: myControllerCorreo,
               decoration: InputDecoration(
                   icon: Icon(
-                    Icons.email,
+                    Icons.next_plan,
                     color: kPrimaryColor,
                   ),
                   border: InputBorder.none,
-                  hintText: "Correo"),
+                  hintText: "Lectura Actual"),
+            ),
+          ),
+          TextFielContainter(
+            child: TextField(
+              controller: myControllerPassword,
+              decoration: InputDecoration(
+                  icon: Icon(
+                    Icons.money,
+                    color: kPrimaryColor,
+                  ),
+                  border: InputBorder.none,
+                  hintText: "Consumo"),
+            ),
+          ),
+          TextFielContainter(
+            child: TextField(
+              controller: myControllerPassword,
+              decoration: InputDecoration(
+                  icon: Icon(
+                    Icons.alarm,
+                    color: kPrimaryColor,
+                  ),
+                  border: InputBorder.none,
+                  hintText: "Exceso"),
             ),
           ),
           TextFielContainter(
@@ -126,7 +141,7 @@ class _RegistroState extends State<Registro> {
                     color: kPrimaryColor,
                   ),
                   border: InputBorder.none,
-                  hintText: "Password"),
+                  hintText: "Subtotal"),
             ),
           ),
           FloatingActionButton.extended(

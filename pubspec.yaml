@@ -33,6 +33,8 @@ dependencies:
   english_words: ^3.1.0
   http: ^0.13.3
   editable: "^1.1.4"
+  overlay_support: ^1.0.0
+
   #carousel_pro: ^1.0.0
 
 
