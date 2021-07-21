@@ -22,15 +22,20 @@ class _HomeState extends State<Home> {
             height: size.height * 0.45,
           ),
           Container(
-            width: size.width * 0.5,
+            width: size.width * 0.4,
             height: size.height * 0.5,
             child: Card(
+              margin: EdgeInsets.symmetric(vertical: 60.0, horizontal: 20.0),
+              color: Colors.yellowAccent,
               elevation: 5,
               child: Column(
                 children: <Widget>[
                   SizedBox(
                     height: 40,
-                    child: Text("PANEL DE CONTROL"),
+                    child: Text(
+                      "PANEL DE CONTROL",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                   FloatingActionButton.extended(
                     onPressed: () {

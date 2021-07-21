@@ -70,7 +70,6 @@ class _ListUsuariosState extends State<ListUsuarios> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getUsuarios();
   }
@@ -82,70 +81,69 @@ class _ListUsuariosState extends State<ListUsuarios> {
         itemBuilder: (context, index) {
           return new Card(
             elevation: 8.0,
-            margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+            margin: new EdgeInsets.symmetric(horizontal: 3.0, vertical: 6.0),
             color: Colors.purple.shade100,
             child: ListTile(
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                leading: Container(
-                  padding: EdgeInsets.only(right: 12.0),
-                  decoration: new BoxDecoration(
-                    border: new Border(
-                        right:
-                            new BorderSide(width: 1.0, color: Colors.white24)),
-                  ),
-                  child: Icon(Icons.info, color: Colors.blueAccent),
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+              leading: Container(
+                padding: EdgeInsets.only(right: 4.0),
+                decoration: new BoxDecoration(
+                  border: new Border(
+                      right: new BorderSide(width: 1.0, color: Colors.white24)),
                 ),
-                title: new Text(
-                  _usuarios[index].nombre + ' ' + _usuarios[index].apellido,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Icon(Icons.info, color: Colors.blueAccent),
+              ),
+              title: new Text(
+                _usuarios[index].nombre + ' ' + _usuarios[index].apellido,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Icon(Icons.person, color: Colors.yellowAccent),
+                  Text(_usuarios[index].id),
+                  Text(_usuarios[index].direccion),
+                  Text(_usuarios[index].correo),
+                ],
+              ),
+              trailing: SizedBox(
+                width: size.width * 0.4,
+                child: new ButtonBar(
+                  mainAxisSize: MainAxisSize.max,
+                  buttonHeight: size.height * 0.2,
                   children: <Widget>[
-                    Icon(Icons.person, color: Colors.yellowAccent),
-                    Text(_usuarios[index].id),
-                    Text(_usuarios[index].direccion),
-                    Text(_usuarios[index].correo),
+                    new FloatingActionButton.extended(
+                      onPressed: () {
+                        _derechosUser = [];
+                        _getDerechos().then((value) {
+                          return _buildResultDerechos();
+                        });
+                      },
+                      label: Text("Lectura"),
+                      icon: Icon(Icons.add),
+                    ),
+                    new FloatingActionButton.extended(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  RegistroDerecho(_usuarios[index].id)),
+                        );
+                      },
+                      label: Text("Derecho"),
+                      icon: Icon(Icons.add_moderator),
+                    ),
+                    new FloatingActionButton.extended(
+                      onPressed: () {},
+                      label: Text("Datos"),
+                      icon: Icon(Icons.data_saver_on),
+                    ),
                   ],
                 ),
-                trailing: SizedBox(
-                  width: size.width * 0.5,
-                  child: new ButtonBar(
-                    mainAxisSize: MainAxisSize.min,
-                    buttonPadding: EdgeInsets.all(8.0),
-                    // this will take space as minimum as posible(to center)
-                    children: <Widget>[
-                      new FloatingActionButton.extended(
-                        onPressed: () {
-                          _derechosUser = [];
-                          _getDerechos().then((value) {
-                            return _buildResultDerechos();
-                          });
-                        },
-                        label: Text("Lectura"),
-                        icon: Icon(Icons.add),
-                      ),
-                      new FloatingActionButton.extended(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    RegistroDerecho(_usuarios[index].id)),
-                          );
-                        },
-                        label: Text("Derecho"),
-                        icon: Icon(Icons.add_moderator),
-                      ),
-                      new FloatingActionButton.extended(
-                        onPressed: () {},
-                        label: Text("Datos"),
-                        icon: Icon(Icons.edit_attributes),
-                      ),
-                    ],
-                  ),
-                )),
+              ),
+            ),
           );
         });
   }
@@ -158,7 +156,7 @@ class _ListUsuariosState extends State<ListUsuarios> {
             color: Colors.blueGrey,
             child: new ListTile(
               leading: Container(
-                padding: EdgeInsets.only(right: 12.0),
+                padding: EdgeInsets.only(right: 4.0),
                 decoration: new BoxDecoration(
                   border: new Border(
                       right: new BorderSide(width: 1.0, color: Colors.white24)),
@@ -174,18 +172,10 @@ class _ListUsuariosState extends State<ListUsuarios> {
                   Text(_usuarioSearch[i].id),
                   Text(_usuarioSearch[i].direccion),
                   Text(_usuarioSearch[i].correo),
-                  FloatingActionButton.extended(
-                    onPressed: () {
-                      _getDerechos().then((value) => _buildResultDerechos);
-                    },
-                    label: Text("Lectura"),
-                    icon: Icon(Icons.add),
-                  )
                 ],
               ),
               trailing: new ButtonBar(
-                mainAxisSize: MainAxisSize
-                    .min, // this will take space as minimum as posible(to center)
+                mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   new FloatingActionButton.extended(
                     onPressed: () {
@@ -258,7 +248,7 @@ class _ListUsuariosState extends State<ListUsuarios> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("USUARIOS REGISTRADOS"),
+        title: new Text("REGISTRO DE INFORMACION"),
         elevation: 0.0,
       ),
       body: _buildBody(),

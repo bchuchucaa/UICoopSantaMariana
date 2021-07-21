@@ -23,7 +23,10 @@ class _InicioState extends State<Inicio> {
       title: "Bienvenido",
       home: Scaffold(
         appBar: AppBar(
-          title: Text("Cooperativa Santa Mariana"),
+          backgroundColor: Colors.indigo.shade900,
+          title: Text(
+            "Cooperativa Santa Mariana",
+          ),
         ),
         body: _paginas[paginaActual],
         bottomNavigationBar: BottomNavigationBar(

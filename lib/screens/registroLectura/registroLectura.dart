@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:coopstamariana/components/text_field_container.dart';
-import 'package:coopstamariana/model/usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../constants.dart';
@@ -16,31 +15,21 @@ class RegistroLectura extends StatefulWidget {
 }
 
 class _RegistroLecturaState extends State<RegistroLectura> {
-  final myControllerId = TextEditingController();
+  final myControllerLectActual = TextEditingController();
 
-  final myControllerNombre = TextEditingController();
-
-  final myControllerApellido = TextEditingController();
-
-  final myControllerDireccion = TextEditingController();
-
-  final myControllerCorreo = TextEditingController();
-
-  final myControllerPassword = TextEditingController();
-
-  register(Usuario user) async {
+  register() async {
     final response =
-        await http.post(Uri.parse('http://localhost:8000/register/'),
+        await http.post(Uri.parse('http://localhost:8000/lectura/create'),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
-            body: jsonEncode(<String, String>{
-              'id': user.id,
-              'nombre': user.nombre,
-              'apellido': user.apellido,
-              'direccion': user.direccion,
-              'correo': user.correo,
-              'password': myControllerPassword.text
+            body: jsonEncode(<String, Object>{
+              "fecha": "12/12/2012",
+              "lecturaAnterior": 0.0,
+              "lecturaActual": double.parse(myControllerLectActual.text),
+              "consumo": 0.0,
+              "exceso": 0.0,
+              "derechoAgua": widget.idDerecho
             }));
     if (response.statusCode == 200) {
       print("USUARIO CREADO");
@@ -63,7 +52,6 @@ class _RegistroLecturaState extends State<RegistroLectura> {
           Text("REGISTRATE AQUI TU LECTURA"),
           TextFielContainter(
             child: TextField(
-              controller: myControllerId,
               decoration: InputDecoration(
                   icon: Icon(
                     Icons.code,
@@ -75,7 +63,6 @@ class _RegistroLecturaState extends State<RegistroLectura> {
           ),
           TextFielContainter(
             child: TextField(
-                controller: myControllerNombre,
                 decoration: InputDecoration(
                     icon: Icon(
                       Icons.date_range,
@@ -86,19 +73,7 @@ class _RegistroLecturaState extends State<RegistroLectura> {
           ),
           TextFielContainter(
             child: TextField(
-              controller: myControllerDireccion,
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.arrow_left,
-                    color: kPrimaryColor,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Lectura Anterior"),
-            ),
-          ),
-          TextFielContainter(
-            child: TextField(
-              controller: myControllerCorreo,
+              controller: myControllerLectActual,
               decoration: InputDecoration(
                   icon: Icon(
                     Icons.next_plan,
@@ -108,52 +83,9 @@ class _RegistroLecturaState extends State<RegistroLectura> {
                   hintText: "Lectura Actual"),
             ),
           ),
-          TextFielContainter(
-            child: TextField(
-              controller: myControllerPassword,
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.money,
-                    color: kPrimaryColor,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Consumo"),
-            ),
-          ),
-          TextFielContainter(
-            child: TextField(
-              controller: myControllerPassword,
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.alarm,
-                    color: kPrimaryColor,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Exceso"),
-            ),
-          ),
-          TextFielContainter(
-            child: TextField(
-              controller: myControllerPassword,
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.password,
-                    color: kPrimaryColor,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Subtotal"),
-            ),
-          ),
           FloatingActionButton.extended(
             onPressed: () {
-              Usuario user = new Usuario(
-                  id: myControllerId.text,
-                  nombre: myControllerNombre.text.toUpperCase(),
-                  apellido: myControllerApellido.text.toUpperCase(),
-                  direccion: myControllerDireccion.text.toUpperCase(),
-                  correo: myControllerCorreo.text,
-                  rol: "usuario");
-              register(user);
+              register();
             },
             label: Text("REGISTRAR"),
             icon: Icon(

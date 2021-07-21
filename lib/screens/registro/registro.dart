@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:coopstamariana/components/text_field_container.dart';
 import 'package:coopstamariana/model/usuario.dart';
+import 'package:coopstamariana/screens/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../constants.dart';
@@ -25,19 +26,18 @@ class _RegistroState extends State<Registro> {
   final myControllerPassword = TextEditingController();
 
   register(Usuario user) async {
-    final response =
-        await http.post(Uri.parse('http://localhost:8000/register/'),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(<String, String>{
-              'id': user.id,
-              'nombre': user.nombre,
-              'apellido': user.apellido,
-              'direccion': user.direccion,
-              'correo': user.correo,
-              'password': myControllerPassword.text
-            }));
+    final response = await http.post(Uri.parse(urlServ + '/register/'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'id': user.id,
+          'nombre': user.nombre,
+          'apellido': user.apellido,
+          'direccion': user.direccion,
+          'correo': user.correo,
+          'password': myControllerPassword.text
+        }));
     if (response.statusCode == 200) {
       print("USUARIO CREADO");
     } else {
@@ -129,23 +129,39 @@ class _RegistroState extends State<Registro> {
                   hintText: "Password"),
             ),
           ),
-          FloatingActionButton.extended(
-            onPressed: () {
-              Usuario user = new Usuario(
-                  id: myControllerId.text,
-                  nombre: myControllerNombre.text.toUpperCase(),
-                  apellido: myControllerApellido.text.toUpperCase(),
-                  direccion: myControllerDireccion.text.toUpperCase(),
-                  correo: myControllerCorreo.text,
-                  rol: "usuario");
-              register(user);
-            },
-            label: Text("REGISTRAR"),
-            icon: Icon(
-              Icons.app_registration_rounded,
-              color: kPrimaryColor,
-            ),
-          )
+          ButtonBar(
+            mainAxisSize: MainAxisSize.min,
+            buttonPadding: EdgeInsets.all(8.0),
+            children: <Widget>[
+              FloatingActionButton.extended(
+                onPressed: () {
+                  Usuario user = new Usuario(
+                      id: myControllerId.text,
+                      nombre: myControllerNombre.text.toUpperCase(),
+                      apellido: myControllerApellido.text.toUpperCase(),
+                      direccion: myControllerDireccion.text.toUpperCase(),
+                      correo: myControllerCorreo.text,
+                      rol: "usuario");
+                  register(user);
+                  Navigator.pop(
+                      context, MaterialPageRoute(builder: (context) => Home()));
+                },
+                label: Text("REGISTRAR"),
+                icon: Icon(
+                  Icons.app_registration_rounded,
+                  color: kPrimaryColor,
+                ),
+              ),
+              FloatingActionButton.extended(
+                onPressed: () {
+                  Navigator.pop(
+                      context, MaterialPageRoute(builder: (context) => Home()));
+                },
+                label: Text("CANCELAR"),
+                icon: Icon(Icons.cancel),
+              ),
+            ],
+          ),
         ],
       ),
     ));
