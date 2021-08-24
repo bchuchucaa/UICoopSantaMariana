@@ -1,10 +1,15 @@
 import 'dart:convert';
-
 import 'package:coopstamariana/components/text_field_container.dart';
-import 'package:coopstamariana/screens/home/home.dart';
+import 'package:coopstamariana/screens/pago/pago.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:pdf/pdf.dart';
 import '../../constants.dart';
+
+const PdfColor green = PdfColor.fromInt(0xffe06c6c); //darker background color
+const PdfColor lightGreen =
+    PdfColor.fromInt(0xffedabab); //light background color
 
 class PagoProcess extends StatefulWidget {
   final String lectura;
@@ -26,6 +31,28 @@ class _RegistroState extends State<PagoProcess> {
 
   final myControllerTotal = TextEditingController();
 
+  showSuccessToast() {
+    Fluttertoast.showToast(
+        msg: "Tu pago se a realizado correctamente.",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 60,
+        backgroundColor: Colors.blueAccent,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
+  showErrorToast() {
+    Fluttertoast.showToast(
+        msg: "Exporting your file failed. Nothing was downloaded.",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 60,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
   paymentProcess() async {
     final response = await http.post(Uri.parse(urlServ + '/pago/ejecutar'),
         headers: <String, String>{
@@ -41,7 +68,7 @@ class _RegistroState extends State<PagoProcess> {
           "lectura": widget.lectura
         }));
     if (response.statusCode == 200) {
-      print("DERECHO CREADO");
+      print("PAGADO");
     } else {
       throw Exception("CONECCTION LOSS");
     }
@@ -135,9 +162,11 @@ class _RegistroState extends State<PagoProcess> {
           FloatingActionButton.extended(
             onPressed: () {
               paymentProcess();
+              showSuccessToast();
+
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Home()),
+                MaterialPageRoute(builder: (context) => Pago()),
               );
             },
             label: Text("REGISTRAR"),
@@ -145,7 +174,7 @@ class _RegistroState extends State<PagoProcess> {
               Icons.app_registration_rounded,
               color: kPrimaryColor,
             ),
-          )
+          ),
         ],
       ),
     ));

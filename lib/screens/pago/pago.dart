@@ -58,13 +58,16 @@ class _PagoState extends State<Pago> {
       print(body);
       setState(() {
         for (var item in jsonData) {
-          _usuarios.add(Usuario(
-              id: item["id"],
-              nombre: item["nombre"],
-              apellido: item["apellido"],
-              direccion: item['direccion'],
-              correo: item['correo'],
-              rol: "NO INFO"));
+          _usuarios.add(
+            Usuario(
+                id: item["id"],
+                nombre: item["nombre"],
+                apellido: item["apellido"],
+                direccion: item['direccion'],
+                correo: item['correo'],
+                rol: "NO INFO",
+                password: "NO INFO"),
+          );
         }
       });
     } else {
@@ -252,38 +255,59 @@ class _PagoState extends State<Pago> {
           return new AlertDialog(
             title: Text('Seleccione su Lectura'),
             content: Container(
-              width: size.width * 0.6,
-              child: new ListView.builder(
-                shrinkWrap: true,
-                itemCount: _lecturasUser.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return new Card(
-                    child: ListTile(
-                      tileColor: Colors.amber,
-                      leading: Icon(
-                        Icons.account_box,
-                        color: Colors.blueAccent,
-                      ),
-                      title: new Text(_lecturasUser[index].fecha),
-                      subtitle:
-                          new Text(_lecturasUser[index].consumo.toString()),
-                      trailing: new TextButton(
-                          child: Text('Pagar'),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PagoProcess(
-                                        _lecturasUser[index].id.toString())));
-                          },
-                          style: TextButton.styleFrom(primary: Colors.red)),
-                      onTap: () {},
-                    ),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 6.0),
-                  );
-                },
-              ),
+              width: size.width * 0.9,
+              child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: DataTable(
+                    sortColumnIndex: 0,
+                    showCheckboxColumn: false,
+                    columns: [
+                      DataColumn(label: Text("Fecha")),
+                      DataColumn(label: Text("LActual")),
+                      DataColumn(label: Text("Consumo")),
+                      DataColumn(label: Text("Exceso")),
+                      DataColumn(label: Text("Pago")),
+                      DataColumn(label: Text("Accion"))
+                    ],
+                    rows: _lecturasUser
+                        .map((lectura) => DataRow(
+                                onSelectChanged: (b) {
+                                  print(lectura.consumo);
+                                },
+                                cells: [
+                                  DataCell(
+                                    Text(lectura.fecha),
+                                  ),
+                                  DataCell(
+                                    Text(lectura.lecturaActual.toString()),
+                                  ),
+                                  DataCell(
+                                    Text(lectura.consumo.toString()),
+                                  ),
+                                  DataCell(
+                                    Text(lectura.exceso.toString()),
+                                  ),
+                                  DataCell(
+                                    Text(lectura.estado.toString()),
+                                  ),
+                                  DataCell(
+                                    new TextButton(
+                                        child: Text('Pagar'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PagoProcess(lectura.id
+                                                          .toString())));
+                                        },
+                                        style: TextButton.styleFrom(
+                                            primary: Colors.red)),
+                                    onTap: () {},
+                                  ),
+                                ]))
+                        .toList(),
+                  )),
             ),
           );
         });

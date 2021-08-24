@@ -5,7 +5,6 @@ import 'package:coopstamariana/screens/registroDerecho/registroDerecho.dart';
 import 'package:coopstamariana/screens/registroLectura/registroLectura.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../../constants.dart';
 
 class ListUsuarios extends StatefulWidget {
   @override
@@ -19,9 +18,9 @@ class _ListUsuariosState extends State<ListUsuarios> {
   final controller = TextEditingController();
 //METHOD TO GET DERECHOS OF USER
 
-  Future<Null> _getDerechos() async {
+  Future<Null> _getDerechos(usuario) async {
     final response = await http.get(Uri.parse(
-      'http://localhost:8000/derecho/derechos?cedula=0106330145',
+      'http://localhost:8000/derecho/derechos?cedula=' + usuario,
     ));
 
     if (response.statusCode == 200) {
@@ -60,7 +59,8 @@ class _ListUsuariosState extends State<ListUsuarios> {
               apellido: item["apellido"],
               direccion: item['direccion'],
               correo: item['correo'],
-              rol: "NO INFO"));
+              rol: "NO INFO",
+              password: "NO TEXT"));
         }
       });
     } else {
@@ -79,70 +79,72 @@ class _ListUsuariosState extends State<ListUsuarios> {
     return new ListView.builder(
         itemCount: _usuarios.length,
         itemBuilder: (context, index) {
-          return new Card(
-            elevation: 8.0,
-            margin: new EdgeInsets.symmetric(horizontal: 3.0, vertical: 6.0),
-            color: Colors.purple.shade100,
-            child: ListTile(
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-              leading: Container(
-                padding: EdgeInsets.only(right: 4.0),
-                decoration: new BoxDecoration(
-                  border: new Border(
-                      right: new BorderSide(width: 1.0, color: Colors.white24)),
-                ),
-                child: Icon(Icons.info, color: Colors.blueAccent),
-              ),
-              title: new Text(
-                _usuarios[index].nombre + ' ' + _usuarios[index].apellido,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Icon(Icons.person, color: Colors.yellowAccent),
-                  Text(_usuarios[index].id),
-                  Text(_usuarios[index].direccion),
-                  Text(_usuarios[index].correo),
-                ],
-              ),
-              trailing: SizedBox(
-                width: size.width * 0.4,
-                child: new ButtonBar(
-                  mainAxisSize: MainAxisSize.max,
-                  buttonHeight: size.height * 0.2,
+          return Container(
+            height: 160,
+            width: size.width * 0.2,
+            margin: new EdgeInsets.all(15),
+            decoration: BoxDecoration(
+                color: Colors.primaries[index % Colors.primaries.length],
+                borderRadius: BorderRadius.circular(20.0),
+                gradient: LinearGradient(colors: [
+                  Colors.primaries[index % Colors.primaries.length]
+                      .withOpacity(0.3),
+                  Colors.primaries[index % Colors.primaries.length],
+                ])),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    new FloatingActionButton.extended(
-                      onPressed: () {
-                        _derechosUser = [];
-                        _getDerechos().then((value) {
-                          return _buildResultDerechos();
-                        });
-                      },
-                      label: Text("Lectura"),
-                      icon: Icon(Icons.add),
+                    Text(
+                      _usuarios[index].nombre + " " + _usuarios[index].apellido,
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
                     ),
-                    new FloatingActionButton.extended(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  RegistroDerecho(_usuarios[index].id)),
-                        );
-                      },
-                      label: Text("Derecho"),
-                      icon: Icon(Icons.add_moderator),
+                    Row(
+                      children: <Widget>[
+                        IconButton(
+                          onPressed: () {
+                            _derechosUser = [];
+                            _getDerechos(_usuarios[index].id).then((value) {
+                              return _buildResultDerechos();
+                            });
+                          },
+                          icon: Icon(Icons.addchart_sharp),
+                          tooltip: "Agregando Lectura",
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        RegistroDerecho(_usuarios[index].id)),
+                              );
+                            },
+                            icon: Icon(Icons.app_registration)),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.person,
+                          ),
+                        )
+                      ],
                     ),
-                    new FloatingActionButton.extended(
-                      onPressed: () {},
-                      label: Text("Datos"),
-                      icon: Icon(Icons.data_saver_on),
-                    ),
-                  ],
-                ),
-              ),
+                    Spacer(),
+                    Text(_usuarios[index].correo,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                    Text(_usuarios[index].direccion,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                    Text(_usuarios[index].id,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                  ]),
             ),
           );
         });
@@ -153,7 +155,6 @@ class _ListUsuariosState extends State<ListUsuarios> {
         itemCount: _usuarioSearch.length,
         itemBuilder: (context, i) {
           return new Card(
-            color: Colors.blueGrey,
             child: new ListTile(
               leading: Container(
                 padding: EdgeInsets.only(right: 4.0),
@@ -181,8 +182,8 @@ class _ListUsuariosState extends State<ListUsuarios> {
                     onPressed: () {
                       //Metod to get all Derechos of user
                       _derechosUser = [];
-                      _getDerechos().then((value) {
-                        return _buildResultDerechos;
+                      _getDerechos(_usuarioSearch[i].id).then((value) {
+                        return _buildResultDerechos();
                       });
                     },
                     label: Text("Lectura"),
@@ -233,7 +234,6 @@ class _ListUsuariosState extends State<ListUsuarios> {
     return new Column(
       children: <Widget>[
         new Container(
-          color: kPrimaryColor,
           child: _buildSearchBox(),
         ),
         new Expanded(
@@ -247,9 +247,12 @@ class _ListUsuariosState extends State<ListUsuarios> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      backgroundColor: Color(0xff212239),
       appBar: new AppBar(
         title: new Text("REGISTRO DE INFORMACION"),
         elevation: 0.0,
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
       ),
       body: _buildBody(),
       resizeToAvoidBottomInset: true,
@@ -272,41 +275,58 @@ class _ListUsuariosState extends State<ListUsuarios> {
   }
 
   _buildResultDerechos() {
+    Size size = MediaQuery.of(context).size;
     return showDialog(
         context: context,
         builder: (BuildContext context) {
           return new AlertDialog(
             title: Text('Seleccione su Derecho'),
             content: Container(
-              width: double.minPositive,
-              child: new ListView.builder(
-                shrinkWrap: true,
-                itemCount: _derechosUser.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return new ListTile(
-                    tileColor: Colors.amber,
-                    leading: Icon(
-                      Icons.account_box,
-                      color: Colors.blueAccent,
-                    ),
-                    title: new Text(_derechosUser[index].numeroDeMedidor),
-                    subtitle: new Text(_derechosUser[index].id),
-                    trailing: new Column(
-                      children: <Widget>[
-                        new Text(_derechosUser[index].fechaAdquisicion)
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                RegistroLectura(_derechosUser[index].id)),
-                      );
-                    },
-                  );
-                },
-              ),
+              width: size.width * 0.6,
+              child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: DataTable(
+                    sortColumnIndex: 0,
+                    showCheckboxColumn: false,
+                    columns: [
+                      DataColumn(label: Text("Fecha")),
+                      DataColumn(label: Text("Medidor")),
+                      DataColumn(label: Text("Usuario")),
+                      DataColumn(label: Text("Accion"))
+                    ],
+                    rows: _derechosUser
+                        .map((derecho) => DataRow(
+                                onSelectChanged: (b) {
+                                  print(derecho.fechaAdquisicion);
+                                },
+                                cells: [
+                                  DataCell(
+                                    Text(derecho.fechaAdquisicion),
+                                  ),
+                                  DataCell(
+                                    Text(derecho.numeroDeMedidor),
+                                  ),
+                                  DataCell(
+                                    Text(derecho.usuario),
+                                  ),
+                                  DataCell(
+                                    new TextButton(
+                                        child: Text('Agregar'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      RegistroLectura(derecho.id
+                                                          .toString())));
+                                        },
+                                        style: TextButton.styleFrom(
+                                            primary: Colors.red)),
+                                    onTap: () {},
+                                  ),
+                                ]))
+                        .toList(),
+                  )),
             ),
           );
         });
