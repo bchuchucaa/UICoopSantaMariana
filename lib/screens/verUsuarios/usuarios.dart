@@ -151,58 +151,79 @@ class _ListUsuariosState extends State<ListUsuarios> {
   }
 
   Widget _buildSearchResults() {
+    Size size = MediaQuery.of(context).size;
     return new ListView.builder(
         itemCount: _usuarioSearch.length,
         itemBuilder: (context, i) {
-          return new Card(
-            child: new ListTile(
-              leading: Container(
-                padding: EdgeInsets.only(right: 4.0),
-                decoration: new BoxDecoration(
-                  border: new Border(
-                      right: new BorderSide(width: 1.0, color: Colors.white24)),
-                ),
-                child: Icon(Icons.info, color: Colors.blueAccent),
-              ),
-              title: new Text(
-                  _usuarioSearch[i].nombre + ' ' + _usuarioSearch[i].apellido),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Icon(Icons.person, color: Colors.yellowAccent),
-                  Text(_usuarioSearch[i].id),
-                  Text(_usuarioSearch[i].direccion),
-                  Text(_usuarioSearch[i].correo),
-                ],
-              ),
-              trailing: new ButtonBar(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  new FloatingActionButton.extended(
-                    onPressed: () {
-                      //Metod to get all Derechos of user
-                      _derechosUser = [];
-                      _getDerechos(_usuarioSearch[i].id).then((value) {
-                        return _buildResultDerechos();
-                      });
-                    },
-                    label: Text("Lectura"),
-                    icon: Icon(Icons.add),
-                  ),
-                  new FloatingActionButton.extended(
-                    onPressed: () {},
-                    label: Text("Derecho"),
-                    icon: Icon(Icons.add_moderator),
-                  ),
-                  new FloatingActionButton.extended(
-                    onPressed: () {},
-                    label: Text("Datos"),
-                    icon: Icon(Icons.edit_attributes),
-                  )
-                ],
-              ),
+          return new Container(
+            height: 160,
+            width: size.width * 0.2,
+            margin: new EdgeInsets.all(15),
+            decoration: new BoxDecoration(
+                color: Colors.primaries[i % Colors.primaries.length],
+                borderRadius: BorderRadius.circular(20.0),
+                gradient: LinearGradient(colors: [
+                  Colors.primaries[i % Colors.primaries.length]
+                      .withOpacity(0.3),
+                  Colors.primaries[i % Colors.primaries.length],
+                ])),
+            child: new Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    new Text(
+                      _usuarioSearch[i].nombre +
+                          " " +
+                          _usuarioSearch[i].apellido,
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    new Row(
+                      children: <Widget>[
+                        new IconButton(
+                          onPressed: () {
+                            _derechosUser = [];
+                            _getDerechos(_usuarioSearch[i].id).then((value) {
+                              return _buildResultDerechos();
+                            });
+                          },
+                          icon: Icon(Icons.addchart_sharp),
+                          tooltip: "Agregando Lectura",
+                        ),
+                        new IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        RegistroDerecho(_usuarioSearch[i].id)),
+                              );
+                            },
+                            icon: Icon(Icons.app_registration)),
+                        new IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.person,
+                          ),
+                        )
+                      ],
+                    ),
+                    new Spacer(),
+                    new Text(_usuarioSearch[i].correo,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                    new Text(_usuarioSearch[i].direccion,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                    new Text(_usuarioSearch[i].id,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                  ]),
             ),
-            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           );
         });
   }

@@ -86,102 +86,122 @@ class _PagoState extends State<Pago> {
     return new ListView.builder(
         itemCount: _usuarios.length,
         itemBuilder: (context, index) {
-          return new Card(
-            elevation: 8.0,
-            margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-            color: Colors.yellow.shade200,
-            child: ListTile(
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                leading: Container(
-                  padding: EdgeInsets.only(right: 6.0),
-                  decoration: new BoxDecoration(
-                    border: new Border(
-                        right:
-                            new BorderSide(width: 1.0, color: Colors.white24)),
-                  ),
-                  child: Icon(Icons.info, color: Colors.blueAccent),
-                ),
-                title: new Text(
-                  _usuarios[index].nombre + ' ' + _usuarios[index].apellido,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          return new Container(
+            height: 160,
+            width: size.width * 0.2,
+            margin: new EdgeInsets.all(15),
+            decoration: BoxDecoration(
+                color: Colors.primaries[index % Colors.primaries.length],
+                borderRadius: BorderRadius.circular(20.0),
+                gradient: LinearGradient(colors: [
+                  Colors.primaries[index % Colors.primaries.length]
+                      .withOpacity(0.3),
+                  Colors.primaries[index % Colors.primaries.length],
+                ])),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Text(_usuarios[index].id),
-                    Text(_usuarios[index].direccion),
-                    Text(_usuarios[index].correo),
-                  ],
-                ),
-                trailing: SizedBox(
-                  width: size.width * 0.4,
-                  child: new ButtonBar(
-                    mainAxisSize: MainAxisSize.max,
-                    // this will take space as minimum as posible(to center)
-                    children: <Widget>[
-                      new FloatingActionButton.extended(
-                        onPressed: () {
-                          _lecturasUser = [];
-                          _getLecturasByUser(_usuarios[index].id).then((value) {
-                            return _buildResultLecturas();
-                          });
-                        },
-                        label: Text("Ver lecturas"),
-                        icon: Icon(Icons.select_all),
-                        backgroundColor: kPrimaryColor,
-                        hoverColor: Colors.grey,
-                      ),
-                    ],
-                  ),
-                )),
+                    Text(
+                      _usuarios[index].nombre + " " + _usuarios[index].apellido,
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        IconButton(
+                          onPressed: () {
+                            _lecturasUser = [];
+                            _getLecturasByUser(_usuarios[index].id)
+                                .then((value) {
+                              return _buildResultLecturas();
+                            });
+                          },
+                          icon: Icon(Icons.addchart_sharp),
+                          tooltip: "Agregando Lectura",
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    Text(_usuarios[index].correo,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                    Text(_usuarios[index].direccion,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                    Text(_usuarios[index].id,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                  ]),
+            ),
           );
         });
   }
 
   Widget _buildSearchResults() {
+    Size size = MediaQuery.of(context).size;
+
     return new ListView.builder(
         itemCount: _usuarioSearch.length,
         itemBuilder: (context, i) {
-          return new Card(
-            color: Colors.green.shade100,
-            child: new ListTile(
-              leading: Container(
-                padding: EdgeInsets.only(right: 6.0),
-                decoration: new BoxDecoration(
-                  border: new Border(
-                      right: new BorderSide(width: 1.0, color: Colors.white24)),
-                ),
-                child: Icon(Icons.info, color: Colors.blueAccent),
-              ),
-              title: new Text(
-                  _usuarioSearch[i].nombre + ' ' + _usuarioSearch[i].apellido),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(_usuarioSearch[i].id),
-                  Text(_usuarioSearch[i].direccion),
-                  Text(_usuarioSearch[i].correo),
-                ],
-              ),
-              trailing: new ButtonBar(
-                mainAxisSize: MainAxisSize
-                    .min, // this will take space as minimum as posible(to center)
-                children: <Widget>[
-                  new FloatingActionButton.extended(
-                    onPressed: () {
-                      _lecturasUser = [];
-                      _getLecturasByUser(_usuarioSearch[i].id).then((value) {
-                        return _buildResultLecturas();
-                      });
-                    },
-                    label: Text("Ver lecturas"),
-                    icon: Icon(Icons.select_all),
-                  ),
-                ],
-              ),
+          return new Container(
+            height: 160,
+            width: size.width * 0.2,
+            margin: new EdgeInsets.all(15),
+            decoration: new BoxDecoration(
+                color: Colors.primaries[i % Colors.primaries.length],
+                borderRadius: BorderRadius.circular(20.0),
+                gradient: LinearGradient(colors: [
+                  Colors.primaries[i % Colors.primaries.length]
+                      .withOpacity(0.3),
+                  Colors.primaries[i % Colors.primaries.length],
+                ])),
+            child: new Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    new Text(
+                      _usuarioSearch[i].nombre +
+                          " " +
+                          _usuarioSearch[i].apellido,
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    new Row(
+                      children: <Widget>[
+                        new IconButton(
+                          onPressed: () {
+                            _lecturasUser = [];
+                            _getLecturasByUser(_usuarioSearch[i].id)
+                                .then((value) {
+                              return _buildResultLecturas();
+                            });
+                          },
+                          icon: Icon(Icons.library_books_sharp),
+                          tooltip: "Ver lecturas",
+                        ),
+                      ],
+                    ),
+                    new Spacer(),
+                    new Text(_usuarioSearch[i].correo,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                    new Text(_usuarioSearch[i].direccion,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                    new Text(_usuarioSearch[i].id,
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                  ]),
             ),
-            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           );
         });
   }
@@ -227,6 +247,7 @@ class _PagoState extends State<Pago> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      backgroundColor: Color(0xff212239),
       body: _buildBody(),
       resizeToAvoidBottomInset: true,
     );
@@ -255,19 +276,18 @@ class _PagoState extends State<Pago> {
           return new AlertDialog(
             title: Text('Seleccione su Lectura'),
             content: Container(
-              width: size.width * 0.9,
+              width: size.width,
               child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: DataTable(
                     sortColumnIndex: 0,
+                    columnSpacing: 20.0,
                     showCheckboxColumn: false,
                     columns: [
-                      DataColumn(label: Text("Fecha")),
-                      DataColumn(label: Text("LActual")),
-                      DataColumn(label: Text("Consumo")),
-                      DataColumn(label: Text("Exceso")),
-                      DataColumn(label: Text("Pago")),
-                      DataColumn(label: Text("Accion"))
+                      DataColumn(label: Text("FF")),
+                      DataColumn(label: Text("CNSM")),
+                      DataColumn(label: Text("EXC")),
+                      DataColumn(label: Text("ACC"))
                     ],
                     rows: _lecturasUser
                         .map((lectura) => DataRow(
@@ -276,23 +296,27 @@ class _PagoState extends State<Pago> {
                                 },
                                 cells: [
                                   DataCell(
-                                    Text(lectura.fecha),
+                                    Container(
+                                      width: size.width * 0.1,
+                                      child: Text(lectura.fecha),
+                                    ),
                                   ),
                                   DataCell(
-                                    Text(lectura.lecturaActual.toString()),
-                                  ),
-                                  DataCell(
-                                    Text(lectura.consumo.toString()),
+                                    Container(
+                                      width: size.width * 0.1,
+                                      child: Text(lectura.consumo.toString()),
+                                    ),
                                   ),
                                   DataCell(
                                     Text(lectura.exceso.toString()),
                                   ),
                                   DataCell(
-                                    Text(lectura.estado.toString()),
-                                  ),
-                                  DataCell(
-                                    new TextButton(
-                                        child: Text('Pagar'),
+                                    Container(
+                                      width: size.width * 0.1,
+                                      child: new FloatingActionButton(
+                                        child: Icon(Icons.payment),
+                                        hoverColor: Colors.green.shade400,
+                                        focusColor: Colors.green.shade400,
                                         onPressed: () {
                                           Navigator.push(
                                               context,
@@ -301,8 +325,8 @@ class _PagoState extends State<Pago> {
                                                       PagoProcess(lectura.id
                                                           .toString())));
                                         },
-                                        style: TextButton.styleFrom(
-                                            primary: Colors.red)),
+                                      ),
+                                    ),
                                     onTap: () {},
                                   ),
                                 ]))

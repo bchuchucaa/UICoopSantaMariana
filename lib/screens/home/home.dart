@@ -63,44 +63,40 @@ class _HomeState extends State<Home> {
             padding: EdgeInsets.only(top: size.height * 0.1),
             width: size.width * 0.5,
             height: size.height * 0.75,
-            child: Card(
-              color: Colors.blue.shade200,
-              elevation: 5,
-              child: Column(
-                children: <Widget>[
-                  SafeArea(
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: SfCalendar(
-                        view: CalendarView.month,
-                        initialDisplayDate: DateTime.now(),
-                      ),
+            child: Column(
+              children: <Widget>[
+                SafeArea(
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: SfCalendar(
+                      view: CalendarView.month,
+                      initialDisplayDate: DateTime.now(),
                     ),
                   ),
-                  SizedBox(height: 10),
-                  FloatingActionButton.extended(
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Registro()));
-                    },
-                    label: Text("REGISTRAR USUARIO"),
-                    backgroundColor: kPrimaryColor,
-                    icon: Icon(Icons.app_registration_outlined),
-                  ),
-                  SizedBox(height: 10),
-                  FloatingActionButton.extended(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ListUsuarios()));
-                    },
-                    backgroundColor: kPrimaryColor,
-                    label: Text("MODIFICAR USUARIO"),
-                    icon: Icon(Icons.edit),
-                  ),
-                ],
-              ),
+                ),
+                SizedBox(height: 10),
+                FloatingActionButton.extended(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Registro()));
+                  },
+                  label: Text("REGISTRAR USUARIO"),
+                  backgroundColor: kPrimaryColor,
+                  icon: Icon(Icons.app_registration_outlined),
+                ),
+                SizedBox(height: 10),
+                FloatingActionButton.extended(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ListUsuarios()));
+                  },
+                  backgroundColor: kPrimaryColor,
+                  label: Text("MODIFICAR USUARIO"),
+                  icon: Icon(Icons.edit),
+                ),
+              ],
             ),
           )
         ],

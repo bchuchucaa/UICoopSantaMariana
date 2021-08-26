@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:coopstamariana/components/text_field_container.dart';
+import 'package:coopstamariana/model/Pago.dart';
 import 'package:coopstamariana/screens/pago/pago.dart';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -53,6 +55,30 @@ class _RegistroState extends State<PagoProcess> {
         fontSize: 16.0);
   }
 
+  Future<PagoModel> paymentVerification() async {
+    final response = await http.post(
+      Uri.parse('http://localhost:8000/lectura/verification'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "id": '0',
+        "atraso": '0',
+        "otros": '0',
+        "mensual": '2',
+        "mora": '0',
+        "total": '2',
+        "lectura": widget.lectura
+      }),
+    );
+    if (response.statusCode == 200) {
+      print(response.body);
+      return PagoModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception("CONECCTION LOSS");
+    }
+  }
+
   paymentProcess() async {
     final response = await http.post(Uri.parse(urlServ + '/pago/ejecutar'),
         headers: <String, String>{
@@ -75,6 +101,13 @@ class _RegistroState extends State<PagoProcess> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     var myControllerOtros;
@@ -86,7 +119,89 @@ class _RegistroState extends State<PagoProcess> {
             width: size.width * 0.45,
             height: size.height * 0.15,
           ),
-          Text("Verificar Pago"),
+          FutureBuilder<PagoModel>(
+              future: paymentVerification(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Column(
+                    children: <Widget>[
+                      TextFielContainter(
+                        child: TextField(
+                          controller: myControllerAtraso,
+                          decoration: InputDecoration(
+                              icon: Icon(
+                                Icons.run_circle,
+                                color: kPrimaryColor,
+                              ),
+                              border: InputBorder.none,
+                              hintText: 'Atraso: ' +
+                                  snapshot.data!.atraso.toString() +
+                                  '\$'),
+                        ),
+                      ),
+                      TextFielContainter(
+                        child: TextField(
+                          controller: myControllerOtros,
+                          decoration: InputDecoration(
+                              icon: Icon(
+                                Icons.add,
+                                color: kPrimaryColor,
+                              ),
+                              border: InputBorder.none,
+                              hintText: 'Otros: ' +
+                                  snapshot.data!.otros.toString() +
+                                  '\$'),
+                        ),
+                      ),
+                      TextFielContainter(
+                        child: TextField(
+                          controller: myControllerMensual,
+                          decoration: InputDecoration(
+                              icon: Icon(
+                                Icons.add,
+                                color: kPrimaryColor,
+                              ),
+                              border: InputBorder.none,
+                              hintText: 'Mensual: ' +
+                                  snapshot.data!.mensual.toString() +
+                                  '\$'),
+                        ),
+                      ),
+                      TextFielContainter(
+                        child: TextField(
+                            controller: myControllerMora,
+                            decoration: InputDecoration(
+                                icon: Icon(
+                                  Icons.add,
+                                  color: kPrimaryColor,
+                                ),
+                                border: InputBorder.none,
+                                hintText: 'Mora: ' +
+                                    snapshot.data!.mora.toString() +
+                                    '\$')),
+                      ),
+                      TextFielContainter(
+                        child: TextField(
+                          controller: myControllerLectura,
+                          decoration: InputDecoration(
+                              icon: Icon(
+                                Icons.code,
+                                color: kPrimaryColor,
+                              ),
+                              border: InputBorder.none,
+                              hintText: 'Total: ' +
+                                  snapshot.data!.total.toString() +
+                                  '\$'),
+                        ),
+                      ),
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                } else {
+                  return CircularProgressIndicator();
+                }
+              }),
           TextFielContainter(
             child: TextField(
               controller: myControllerLectura,
@@ -96,67 +211,7 @@ class _RegistroState extends State<PagoProcess> {
                     color: kPrimaryColor,
                   ),
                   border: InputBorder.none,
-                  hintText: widget.lectura),
-            ),
-          ),
-          TextFielContainter(
-            child: TextField(
-              controller: myControllerAtraso,
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.run_circle,
-                    color: kPrimaryColor,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Atraso"),
-            ),
-          ),
-          TextFielContainter(
-            child: TextField(
-              controller: myControllerOtros,
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.add,
-                    color: kPrimaryColor,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Otros"),
-            ),
-          ),
-          TextFielContainter(
-            child: TextField(
-              controller: myControllerMensual,
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.add,
-                    color: kPrimaryColor,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Mensual"),
-            ),
-          ),
-          TextFielContainter(
-            child: TextField(
-              controller: myControllerMora,
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.add,
-                    color: kPrimaryColor,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Mora"),
-            ),
-          ),
-          TextFielContainter(
-            child: TextField(
-              controller: myControllerTotal,
-              decoration: InputDecoration(
-                  icon: Icon(
-                    Icons.summarize,
-                    color: kPrimaryColor,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Total"),
+                  hintText: 'Lectura: ' + widget.lectura),
             ),
           ),
           FloatingActionButton.extended(
